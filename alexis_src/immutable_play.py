@@ -3,18 +3,18 @@
 import copy
 import json
 
-permanents = {"pink"}
-before = {"purple", "brown"}
-after = {"black", "white", "red", "blue", "grey"}
+permanents = ["pink"]
+before = ["purple", "brown"]
+after = ["black", "white", "red", "blue", "grey"]
 
-colors = {"pink",
+colors = ["pink",
           "blue",
           "purple",
           "grey",
           "white",
           "black",
           "red",
-          "brown"}
+          "brown"]
 
 passages = [{1, 4}, {0, 2}, {1, 3}, {2, 7}, {0, 5, 8},
             {4, 6}, {5, 7}, {3, 6, 9}, {4, 9}, {7, 8}]
@@ -23,8 +23,6 @@ pink_passages = [{1, 4}, {0, 2, 5, 7}, {1, 3, 6}, {2, 7}, {0, 5, 8, 9},
                  {7, 8, 4, 6}]
 
 mandatory_powers = ["red", "blue", "grey"]
-
-char_needs_arg = {"white", "purple", "brown", "grey", "blue"}
 
 def game_state_deep_copy(game_state):
     # Copying characters dict's references around to:
@@ -38,7 +36,7 @@ def game_state_deep_copy(game_state):
     new_game_state = {
         "position_carlotta": game_state["position_carlotta"],
         "exit": game_state["exit"],
-        "num_tour": game_state["num_tour"],
+        "num_tour": game_state["num_tour"], # This should get incremented sometimes, doesn't matter at the moment
         "shadow": game_state["shadow"],
         "blocked": game_state["blocked"].copy(),
         "characters": chars,
