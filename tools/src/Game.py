@@ -43,16 +43,16 @@ class Game:
         self.alibi_cards = self.character_cards.copy()
         self.fantom = choice(self.alibi_cards)
         # Todo: Should be placed in a logger section of the __init__()
-        logger.info("the fantom is " + self.fantom.color)
+        # logger.info("the fantom is " + self.fantom.color)
         self.alibi_cards.remove(self.fantom)
         self.alibi_cards.extend(['fantom'] * 3)
 
         # log
-        logger.info("\n=======\nnew game\n=======")
+        # logger.info("\n=======\nnew game\n=======")
         # Todo: 1 Should be removed
-        logger.info(f"shuffle {len(self.character_cards)} character_cards")
+        # logger.info(f"shuffle {len(self.character_cards)} character_cards")
         # Todo: 2 Should be removed
-        logger.info(f"shuffle {len(self.alibi_cards)} alibi cards")
+        # logger.info(f"shuffle {len(self.alibi_cards)} alibi cards")
         # work
         # Todo: 1 Should be removed
         shuffle(self.character_cards)
@@ -130,8 +130,8 @@ class Game:
         """
         first_player_in_phase = (self.num_tour + 1) % 2
         if first_player_in_phase == 0:
-            logger.info(
-                f"-\nshuffle {len(self.character_cards)} character_cards\n-")
+            # logger.info(
+                # f"-\nshuffle {len(self.character_cards)} character_cards\n-")
             shuffle(self.character_cards)
             self.active_cards = self.character_cards[:4]
         else:
@@ -150,14 +150,14 @@ class Game:
             [p for p in self.characters if p.position == i] for i in range(10)]
         if len(partition[self.fantom.position]) == 1 \
                 or self.fantom.position == self.shadow:
-            logger.info("The fantom screams.")
+            # logger.info("The fantom screams.")
             self.position_carlotta += 1
             for room, chars in enumerate(partition):
                 if len(chars) > 1 and room != self.shadow:
                     for p in chars:
                         p.suspect = False
         else:
-            logger.info("the fantom does not scream.")
+            # logger.info("the fantom does not scream.")
             for room, chars in enumerate(partition):
                 if len(chars) == 1 or room == self.shadow:
                     for p in chars:
@@ -167,9 +167,9 @@ class Game:
 
     def tour(self):
         # log
-        logger.info("\n------------------")
-        logger.info(self)
-        logger.debug(json.dumps(self.update_game_state(""), indent=4))
+        # logger.info("\n------------------")
+        # logger.info(self)
+        # logger.debug(json.dumps(self.update_game_state(""), indent=4))
 
         # work
         self.actions()

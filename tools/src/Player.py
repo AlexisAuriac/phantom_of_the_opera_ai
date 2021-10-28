@@ -18,9 +18,9 @@ class Player:
         self.role: str = "inspector" if n == 0 else "fantom"
 
     def play(self, game):
-        logger.info("--\n" + self.role + " plays\n--")
+        # logger.info("--\n" + self.role + " plays\n--")
 
-        logger.debug(json.dumps(game.update_game_state(""), indent=4))
+        # logger.debug(json.dumps(game.update_game_state(""), indent=4))
         charact = self.select(
             game.active_cards, game.update_game_state(self.role))
 
@@ -58,14 +58,14 @@ class Player:
                 ' !  : selected character not in '
                 'available characters. Choosing random character.'
             )
-            logger.warning(warning_message)
+            # logger.warning(warning_message)
             selected_character = randint(0, len(active_cards) - 1)
 
         perso = active_cards[selected_character]
 
         # log
-        logger.info(f"question : {question['question type']}")
-        logger.info(f"answer : {perso}")
+        # logger.info(f"question : {question['question type']}")
+        # logger.info(f"answer : {perso}")
 
         del active_cards[selected_character]
         return perso
@@ -107,25 +107,25 @@ class Player:
                 power_activation = ask_question_json(self, question)
 
                 # log
-                logger.info(f"question : {question['question type']}")
+                # logger.info(f"question : {question['question type']}")
                 if power_activation == 1:
                     power_answer = "yes"
                 else:
                     power_answer = "no"
-                logger.info(f"answer  : {power_answer}")
+                # logger.info(f"answer  : {power_answer}")
 
             # the power will be used
             # charact.power represents the fact that
             # the power is still available
             if power_activation:
-                logger.info(charact.color + " power activated")
+                # logger.info(charact.color + " power activated")
                 charact.power_activated = True
 
                 # red character
                 if charact.color == "red":
                     draw = choice(game.alibi_cards)
                     game.alibi_cards.remove(draw)
-                    logger.info(str(draw) + " was drawn")
+                    # logger.info(str(draw) + " was drawn")
                     if draw == "fantom":
                         game.position_carlotta += -1 if self.num == 0 else 1
                     elif self.num == 0:
@@ -136,7 +136,7 @@ class Player:
                     for q in game.characters:
                         if q.position in self.get_adjacent_positions(charact, game):
                             q.position = charact.position
-                            logger.info("new position : " + str(q))
+                            # logger.info("new position : " + str(q))
 
                 # white character
                 if charact.color == "white":
@@ -159,23 +159,23 @@ class Player:
                                     ' !  : selected position not available '
                                     'Choosing random position.'
                                 )
-                                logger.warning(warning_message)
+                                # logger.warning(warning_message)
                                 selected_position = choice(available_positions)
 
                             else:
                                 selected_position = available_positions[selected_index]
 
-                            logger.info(
-                                f"question : {question['question type']}")
-                            logger.info("answer : " +
-                                        str(selected_position))
+                            # logger.info(
+                                # f"question : {question['question type']}")
+                            # logger.info("answer : " +
+                                        # str(selected_position))
                             moved_character.position = selected_position
-                            logger.info("new position : " +
-                                        str(moved_character))
+                            # logger.info("new position : " +
+                                        # str(moved_character))
 
                 # purple character
                 if charact.color == "purple":
-                    # logger.debug("Rappel des positions :\n" + str(game))
+                    logger.debug("Rappel des positions :\n" + str(game))
 
                     available_characters = [q for q in game.characters if
                                             q.color != "purple"]
@@ -194,20 +194,20 @@ class Player:
                             ' !  : selected character not available '
                             'Choosing random character.'
                         )
-                        logger.warning(warning_message)
+                        # logger.warning(warning_message)
                         selected_character = choice(colors)
 
                     else:
                         selected_character = available_characters[selected_index]
 
-                    logger.info(f"question : {question['question type']}")
-                    logger.info(f"answer : {selected_character}")
+                    # logger.info(f"question : {question['question type']}")
+                    # logger.info(f"answer : {selected_character}")
 
                     # swap positions
                     charact.position, selected_character.position = selected_character.position, charact.position
 
-                    logger.info(f"new position : {charact}")
-                    logger.info(f"new position : {selected_character}")
+                    # logger.info(f"new position : {charact}")
+                    # logger.info(f"new position : {selected_character}")
 
                     return selected_character
 
@@ -233,13 +233,13 @@ class Player:
                                 ' !  : selected character not available '
                                 'Choosing random character.'
                             )
-                            logger.warning(warning_message)
+                            # logger.warning(warning_message)
                             selected_character = choice(colors)
                         else:
                             selected_character = available_characters[selected_index]
 
-                        logger.info(f"question : {question['question type']}")
-                        logger.info(f"answer : {selected_character}")
+                        # logger.info(f"question : {question['question type']}")
+                        # logger.info(f"answer : {selected_character}")
                         return selected_character
                     else:
                         return None
@@ -260,7 +260,7 @@ class Player:
                             ' !  : selected room not available '
                             'Choosing random room.'
                         )
-                        logger.warning(warning_message)
+                        # logger.warning(warning_message)
                         selected_index = randint(0, len(available_rooms) - 1)
                         selected_room = available_rooms[selected_index]
 
@@ -268,8 +268,8 @@ class Player:
                         selected_room = available_rooms[selected_index]
 
                     game.shadow = selected_room
-                    logger.info(f"question : {question['question type']}")
-                    logger.info("answer : " + str(game.shadow))
+                    # logger.info(f"question : {question['question type']}")
+                    # logger.info("answer : " + str(game.shadow))
 
                 # blue character
                 if charact.color == "blue":
@@ -287,7 +287,7 @@ class Player:
                             ' !  : selected room not available '
                             'Choosing random room.'
                         )
-                        logger.warning(warning_message)
+                        # logger.warning(warning_message)
                         selected_index = randint(0, len(available_rooms) - 1)
                         selected_room = available_rooms[selected_index]
 
@@ -308,16 +308,16 @@ class Player:
                             ' !  : selected exit not available '
                             'Choosing random exit.'
                         )
-                        logger.warning(warning_message)
+                        # logger.warning(warning_message)
                         __import__('ipdb').set_trace()
                         selected_exit = choice(passages_work)
 
                     else:
                         selected_exit = available_exits[selected_index]
 
-                    logger.info(f"question : {question['question type']}")
-                    logger.info("answer : " +
-                                str({selected_room, selected_exit}))
+                    # logger.info(f"question : {question['question type']}")
+                    # logger.info("answer : " +
+                                # str({selected_room, selected_exit}))
                     game.blocked = tuple((selected_room, selected_exit))
             else:
                 # if the power was not used
@@ -377,15 +377,15 @@ class Player:
                     ' !  : selected position not available '
                     'Choosing random position.'
                 )
-                logger.warning(warning_message)
+                # logger.warning(warning_message)
                 selected_position = choice(available_positions)
 
             else:
                 selected_position = available_positions[selected_index]
 
-            logger.info(f"question : {question['question type']}")
-            logger.info(f"answer : {selected_position}")
-            logger.info(f"new position : {selected_position}")
+            # logger.info(f"question : {question['question type']}")
+            # logger.info(f"answer : {selected_position}")
+            # logger.info(f"new position : {selected_position}")
 
             # it the character is brown and the power has been activated
             # we move several characters with him
