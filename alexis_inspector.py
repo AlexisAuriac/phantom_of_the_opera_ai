@@ -3,20 +3,19 @@
 import json
 import logging
 import os
+import sys
+import time
 import copy
 import random
-import socket
 from logging.handlers import RotatingFileHandler
 
-import alexis_src.protocol as protocol
-
-from alexis_src.utils import get_char_from_color
+from alexis_src.client_player import ClientPlayer
 from alexis_src.get_all_possible_plays import get_all_possible_plays
 from alexis_src.immutable_play import immutable_play
 from alexis_src.evaluate_game_state import predict_carlotta_move_inspector
 
-host = "localhost"
-port = 12000
+DEFAULT_HOST = "localhost"
+DEFAULT_PORT = 12000
 # HEADERSIZE = 10
 
 """
@@ -37,6 +36,7 @@ set up inspector logging
 # stream_handler = logging.StreamHandler()
 # stream_handler.setLevel(logging.WARNING)
 # inspector_logger.addHandler(stream_handler)
+
 
 def get_best_play(game_state, plays):
     best_play = None
@@ -86,24 +86,11 @@ def immutable_play_rec2(question):
     return best_play
 
 
-class Player():
-
+class SimpleMaxAI:
     def __init__(self):
-
-        self.end = False
-        # self.old_question = ""
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.response_stack = []
-        self.play = []
 
-    def connect(self):
-        self.socket.connect((host, port))
-
-    def reset(self):
-        self.socket.close()
-
-    def answer(self, question):
+    def get_next_play(self, question):
         if self.response_stack == []:
             if (question["game state"]["num_tour"] - 1) % 2 == 1:
                 self.response_stack = immutable_play_rec2(question)
@@ -118,26 +105,14 @@ class Player():
         else:
             return question["data"].index(self.response_stack.pop(0))
 
-    def handle_json(self, data):
-        data = json.loads(data)
-        response = self.answer(data)
-        # send back to server
-        bytes_data = json.dumps(response).encode("utf-8")
-        protocol.send_json(self.socket, bytes_data)
 
-    def run(self):
+if __name__ == "__main__":
+    if len(sys.argv) == 2:
+        seed = float(sys.argv[1])
+    else:
+        seed = time.time()
+    random.seed(seed)
 
-        self.connect()
-
-        while self.end is not True:
-            received_message = protocol.receive_json(self.socket)
-            if received_message:
-                self.handle_json(received_message)
-            else:
-                print("no message, finished learning")
-                self.end = True
-
-
-p = Player()
-
-p.run()
+    ai = SimpleMaxAI()
+    p = ClientPlayer(DEFAULT_HOST, DEFAULT_PORT, ai)
+    p.run()
