@@ -1,3 +1,7 @@
+#!/bin/python3
+
+import sys
+import time
 import json
 import logging
 import os
@@ -14,27 +18,25 @@ port = 12000
 """
 set up inspector logging
 """
-inspector_logger = logging.getLogger()
-inspector_logger.setLevel(logging.DEBUG)
-formatter = logging.Formatter(
-    "%(asctime)s :: %(levelname)s :: %(message)s", "%H:%M:%S")
-# file
-if os.path.exists("./logs/inspector.log"):
-    os.remove("./logs/inspector.log")
-file_handler = RotatingFileHandler('./logs/inspector.log', 'a', 1000000, 1)
-file_handler.setLevel(logging.DEBUG)
-file_handler.setFormatter(formatter)
-inspector_logger.addHandler(file_handler)
-# stream
-stream_handler = logging.StreamHandler()
-stream_handler.setLevel(logging.WARNING)
-inspector_logger.addHandler(stream_handler)
+# inspector_logger = logging.getLogger()
+# inspector_logger.setLevel(logging.DEBUG)
+# formatter = logging.Formatter(
+#     "%(asctime)s :: %(levelname)s :: %(message)s", "%H:%M:%S")
+# # file
+# if os.path.exists("./logs/inspector.log"):
+#     os.remove("./logs/inspector.log")
+# file_handler = RotatingFileHandler('./logs/inspector.log', 'a', 1000000, 1)
+# file_handler.setLevel(logging.DEBUG)
+# file_handler.setFormatter(formatter)
+# inspector_logger.addHandler(file_handler)
+# # stream
+# stream_handler = logging.StreamHandler()
+# stream_handler.setLevel(logging.WARNING)
+# inspector_logger.addHandler(stream_handler)
 
 
 class Player():
-
     def __init__(self):
-
         self.end = False
         # self.old_question = ""
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -52,12 +54,12 @@ class Player():
         game_state = question["game state"]
         response_index = random.randint(0, len(data)-1)
         # log
-        inspector_logger.debug("|\n|")
-        inspector_logger.debug("inspector answers")
-        inspector_logger.debug(f"question type ----- {question['question type']}")
-        inspector_logger.debug(f"data -------------- {data}")
-        inspector_logger.debug(f"response index ---- {response_index}")
-        inspector_logger.debug(f"response ---------- {data[response_index]}")
+        # inspector_logger.debug("|\n|")
+        # inspector_logger.debug("inspector answers")
+        # inspector_logger.debug(f"question type ----- {question['question type']}")
+        # inspector_logger.debug(f"data -------------- {data}")
+        # inspector_logger.debug(f"response index ---- {response_index}")
+        # inspector_logger.debug(f"response ---------- {data[response_index]}")
         return response_index
 
     def handle_json(self, data):
@@ -68,7 +70,6 @@ class Player():
         protocol.send_json(self.socket, bytes_data)
 
     def run(self):
-
         self.connect()
 
         while self.end is not True:
@@ -79,7 +80,12 @@ class Player():
                 print("no message, finished learning")
                 self.end = True
 
+if __name__ == "__main__":
+    if len(sys.argv) == 2:
+        seed = float(sys.argv[1])
+    else:
+        seed = time.time()
+    random.seed(seed)
 
-p = Player()
-
-p.run()
+    p = Player()
+    p.run()
