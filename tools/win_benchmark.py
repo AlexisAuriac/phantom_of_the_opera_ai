@@ -9,7 +9,7 @@ import sys
 from queue import Queue
 
 # Disables logging on stdout; see the logs/ folder to find them
-os.environ["DONT_LOG_STDOUT"] = "NO"
+os.environ["DISABLE_LOGGING"] = ""
 
 from server import startServer, endServer, play
 
@@ -35,27 +35,27 @@ class LoadingBar():
 
 
 class SubprocessThread(threading.Thread):
-	def __init__(self, command):
+	def __init__(self, command, seed):
 		threading.Thread.__init__(self)
 		self.command = command
+		self.seed = seed
 	def run(self):
-		subprocess.run(self.command, capture_output=True, shell=True)
+		subprocess.run(self.command + " " + str(self.seed), capture_output=True, shell=True)
 
 
 class ServerThread(threading.Thread):
-	def __init__(self, resQueue):
+	def __init__(self, resQueue, seed):
 		threading.Thread.__init__(self)
 		self.resQueue = resQueue
+		self.seed = seed
 
 	def run(self):
-		seed = time.time()
-		random.seed(seed)
 		pr = startServer()
 		try:
 			score = play()
 			self.resQueue.put(["ok", score])
 		except:
-			self.resQueue.put(["crash", seed])
+			self.resQueue.put(["crash", self.seed])
 		endServer(pr)
 
 
@@ -68,9 +68,14 @@ def runWinBench(comFan, comInsp, nbGames):
 	firstLoop = True
 
 	for i in range(nbGames):
-		serverThread = ServerThread(q)
-		inspThread = SubprocessThread(comInsp)
-		fantomThread = SubprocessThread(comFan)
+		seed = time.time()
+		random.seed(seed)
+		if i != 0 and i % 100 == 0:
+			printWinStats(scores)
+			print("=================")
+		serverThread = ServerThread(q, seed)
+		inspThread = SubprocessThread(comInsp, seed)
+		fantomThread = SubprocessThread(comFan, seed)
 
 		serverThread.start()
 
@@ -96,7 +101,8 @@ def runWinBench(comFan, comInsp, nbGames):
 			print(f"This is the server seed, use it to reproduce the error (won't always work): {res[1]}")
 			return scores
 
-		print(bar.increment(), end="", file=sys.stderr)
+		if nbGames >= 100:
+			print(bar.increment(), end="", file=sys.stderr)
 		sys.stderr.flush()
 
 	print()
