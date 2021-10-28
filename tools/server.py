@@ -1,6 +1,9 @@
+#!/bin/python3
+
 import cProfile
 import random
 import sys
+import time
 
 from src.Game import Game
 from src.Player import Player
@@ -52,6 +55,10 @@ def play():
 if __name__ == '__main__':
     if len(sys.argv) == 2:
         random.seed(float(sys.argv[1]))
+    else:
+        seed = time.time()
+        random.seed(seed)
+        print(seed)
     pr = startServer()
     play()
     endServer(pr)
